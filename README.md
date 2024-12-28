@@ -1,7 +1,4 @@
-# Farmer Management System - Backend Documentation
-
-This document provides a detailed overview of the backend implementation for the **Farmer Management System** built with Next.js, Prisma, and Supabase. It includes API endpoint descriptions,
-environment variables, file structure, a flowchart, and step-by-step initialization commands.
+# Backend Documentation for Chaya App
 
 ---
 
@@ -224,7 +221,7 @@ graph TD
     F --> N["Remove Files from Supabase"]
 ```
 
----
+---This documentation provides a comprehensive overview of the backend implementation. Use the flowchart and checklist to track progress and ensure all tasks are completed.
 
 ## Step-by-Step Initialization
 
@@ -380,5 +377,3 @@ npm run dev
 -  [ ] Deploy the backend to a production environment.
 
 ---
-
-This documentation provides a comprehensive overview of the backend implementation. Use the flowchart and checklist to track progress and ensure all tasks are completed.
