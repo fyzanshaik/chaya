@@ -1,0 +1,95 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Farmer {
+  id            Int      @id @default(autoincrement())
+  farmerName    String
+  relationship  String // S/o, W/o, D/o
+  gender        String
+  community     String // Community (OBC, OC, BC, SC, ST)
+  aadharNumber  String   @unique // Aadhar Number (12 digits)
+  state         String
+  district      String
+  mandal        String
+  village       String
+  panchayath    String
+  dateOfBirth   DateTime
+  age           Int
+  contactNumber String
+  accountNumber String
+
+  // Relations
+  documents   Documents?
+  bankDetails BankDetails?
+  fields      Fields[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("farmers")
+}
+
+model Documents {
+  id         Int     @id @default(autoincrement())
+  profilePic String? // URL for profile picture
+  aadhar     String? // URL for Aadhar document
+  land       String? // URL for land document
+  bank       String? // URL for bank document
+
+  // Relation to Farmer
+  farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  farmerId Int    @unique // One-to-one relationship
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("documents")
+}
+
+model BankDetails {
+  id         Int    @id @default(autoincrement())
+  ifscCode   String
+  branchName String
+  address    String
+  bankName   String
+  bankCode   String
+
+  // Relation to Farmer
+  farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  farmerId Int    @unique // One-to-one relationship
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bank_details")
+}
+
+model Fields {
+  id            Int    @id @default(autoincrement())
+  surveyNumber  String
+  areaHa        Float // Area in Hectares
+  yieldEstimate Float
+  locationX     Float // X coordinate
+  locationY     Float // Y coordinate
+
+  // Relation to Farmer
+  farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  farmerId Int
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("fields")
+}
