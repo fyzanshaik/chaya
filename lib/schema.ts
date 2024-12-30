@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// BankDetails Schema
 export const BankDetailsSchema = z.object({
 	ifscCode: z.string().min(11).max(11),
 	branchName: z.string(),
@@ -9,7 +8,6 @@ export const BankDetailsSchema = z.object({
 	bankCode: z.string(),
 });
 
-// Field Schema
 export const FieldSchema = z.object({
 	surveyNumber: z.string(),
 	areaHa: z.number().positive(),
@@ -18,7 +16,6 @@ export const FieldSchema = z.object({
 	locationY: z.number(),
 });
 
-// Input Documents Schema (for form data)
 export const DocumentsInputSchema = z.object({
 	profilePic: z.instanceof(File).optional(),
 	aadhar: z.instanceof(File).optional(),
@@ -26,7 +23,6 @@ export const DocumentsInputSchema = z.object({
 	bank: z.instanceof(File).optional(),
 });
 
-// Output Documents Schema (for final data)
 export const DocumentsOutputSchema = z.object({
 	profilePic: z.string().optional(),
 	aadhar: z.string().optional(),
@@ -34,7 +30,6 @@ export const DocumentsOutputSchema = z.object({
 	bank: z.string().optional(),
 });
 
-// Input Farmer Schema (for form data)
 export const FarmerInputSchema = z.object({
 	farmerName: z.string(),
 	relationship: z.string(),
@@ -52,10 +47,9 @@ export const FarmerInputSchema = z.object({
 	accountNumber: z.string(),
 	bankDetails: BankDetailsSchema,
 	fields: z.array(FieldSchema),
-	documents: DocumentsInputSchema, // Use the input schema for documents
+	documents: DocumentsInputSchema,
 });
 
-// Output Farmer Schema (for final data)
 export const FarmerOutputSchema = z.object({
 	farmerName: z.string(),
 	relationship: z.string(),
@@ -73,7 +67,38 @@ export const FarmerOutputSchema = z.object({
 	accountNumber: z.string(),
 	bankDetails: BankDetailsSchema,
 	fields: z.array(FieldSchema),
-	documents: DocumentsOutputSchema, // Use the output schema for documents
+	documents: DocumentsOutputSchema,
+});
+
+export const FarmerFormSchema = z.object({
+	farmerName: z.string().min(1, 'Farmer name is required'),
+	relationship: z.string().min(1, 'Relationship is required'),
+	gender: z.string().min(1, 'Gender is required'),
+	community: z.string().min(1, 'Community is required'),
+	aadharNumber: z.string().length(12, 'Aadhar number must be 12 digits'),
+	state: z.string().min(1, 'State is required'),
+	district: z.string().min(1, 'District is required'),
+	mandal: z.string().min(1, 'Mandal is required'),
+	village: z.string().min(1, 'Village is required'),
+	panchayath: z.string().min(1, 'Panchayath is required'),
+	dateOfBirth: z.string().min(1, 'Date of birth is required'),
+	age: z.number().min(18, 'Age must be at least 18'),
+	contactNumber: z.string().length(10, 'Contact number must be 10 digits'),
+	accountNumber: z.string().min(1, 'Account number is required'),
+	ifscCode: z.string().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC code'),
+	branchName: z.string().min(1, 'Branch name is required'),
+	address: z.string().min(1, 'Address is required'),
+	bankName: z.string().min(1, 'Bank name is required'),
+	bankCode: z.string().min(1, 'Bank code is required'),
+	fields: z.array(
+		z.object({
+			surveyNumber: z.string().min(1, 'Survey number is required'),
+			areaHa: z.number().min(0, 'Area must be positive'),
+			yieldEstimate: z.number().min(0, 'Yield estimate must be positive'),
+			locationX: z.number(),
+			locationY: z.number(),
+		})
+	),
 });
 
 export type FarmerInput = z.infer<typeof FarmerInputSchema>;

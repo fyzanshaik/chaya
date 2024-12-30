@@ -1,4 +1,3 @@
-// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,10 +11,10 @@ datasource db {
 model Farmer {
   id            Int      @id @default(autoincrement())
   farmerName    String
-  relationship  String // S/o, W/o, D/o
+  relationship  String
   gender        String
-  community     String // Community (OBC, OC, BC, SC, ST)
-  aadharNumber  String   @unique // Aadhar Number (12 digits)
+  community     String
+  aadharNumber  String   @unique
   state         String
   district      String
   mandal        String
@@ -26,12 +25,10 @@ model Farmer {
   contactNumber String
   accountNumber String
 
-  // Relations
   documents   Documents?
   bankDetails BankDetails?
   fields      Fields[]
 
-  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -40,16 +37,14 @@ model Farmer {
 
 model Documents {
   id         Int     @id @default(autoincrement())
-  profilePic String? // URL for profile picture
-  aadhar     String? // URL for Aadhar document
-  land       String? // URL for land document
-  bank       String? // URL for bank document
+  profilePic String?
+  aadhar     String?
+  land       String?
+  bank       String?
 
-  // Relation to Farmer
   farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
-  farmerId Int    @unique // One-to-one relationship
+  farmerId Int    @unique
 
-  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -64,11 +59,9 @@ model BankDetails {
   bankName   String
   bankCode   String
 
-  // Relation to Farmer
   farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
-  farmerId Int    @unique // One-to-one relationship
+  farmerId Int    @unique
 
-  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -78,16 +71,14 @@ model BankDetails {
 model Fields {
   id            Int    @id @default(autoincrement())
   surveyNumber  String
-  areaHa        Float // Area in Hectares
+  areaHa        Float
   yieldEstimate Float
-  locationX     Float // X coordinate
-  locationY     Float // Y coordinate
+  locationX     Float
+  locationY     Float
 
-  // Relation to Farmer
   farmer   Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
   farmerId Int
 
-  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

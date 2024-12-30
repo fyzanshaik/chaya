@@ -32,11 +32,11 @@ export async function POST(request: Request) {
 		contactNumber: formData.get('contactNumber'),
 		accountNumber: formData.get('accountNumber'),
 		bankDetails: {
-			ifscCode: formData.get('ifscCode'),
-			branchName: formData.get('branchName'),
-			address: formData.get('address'),
-			bankName: formData.get('bankName'),
-			bankCode: formData.get('bankCode'),
+			ifscCode: formData.get('ifscCode') as string,
+			branchName: formData.get('branchName') as string,
+			address: formData.get('address') as string,
+			bankName: formData.get('bankName') as string,
+			bankCode: formData.get('bankCode') as string,
 		},
 		fields: JSON.parse(formData.get('fields') as string).map((field: Field) => ({
 			surveyNumber: field.surveyNumber,

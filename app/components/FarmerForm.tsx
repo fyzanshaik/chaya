@@ -90,7 +90,7 @@ const FarmerForm = () => {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-			<h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Farmer Registration Form</h1>
+			{/* <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Farmer Registration Form</h1> */}
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{/* Basic Information */}
