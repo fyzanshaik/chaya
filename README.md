@@ -366,8 +366,9 @@ npm run dev
 
 ## Pending Tasks
 
--  [ ] Add new shadcn dashboard and UI
--  [ ] Connect it to the backend
+-  [x] Add new shadcn form
+-  [ ] Configure table
+-  [x] Connect it to the backend
 -  [ ] Fetch and create the tables for it
 -  [ ] Add more error validations for optimized process
 -  [ ] Refactor code for simple schema and process at both frontend and backend
