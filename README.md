@@ -363,24 +363,3 @@ npm run dev
 ```
 
 ---
-
-## Pending Tasks
-
--  [x] Add new shadcn form
--  [ ] Configure table
--  [x] Connect it to the backend
--  [ ] Fetch and create the tables for it
--  [ ] Add more error validations for optimized process
--  [ ] Refactor code for simple schema and process at both frontend and backend
-
--  [ ] Add authentication and authorization for API endpoints.
--  [ ] Implement rate limiting for API requests.
--  [ ] Add unit tests for API endpoints.
--  [ ] Add integration tests for the entire system.
--  [ ] Optimize file uploads for large files.
--  [ ] Add logging for all API requests and responses.
--  [ ] Implement error handling for edge cases (e.g., invalid file types).
--  [ ] Add Swagger documentation for API endpoints.
--  [ ] Deploy the backend to a production environment.
-
----
