@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, Download } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Download } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,14 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Gender = "MALE" | "FEMALE" | "OTHER";
 type Community = "GENERAL" | "OBC" | "BC" | "SC" | "ST";
-type DocumentType = "photo" | "aadharDoc" | "landDoc" | "bankDoc";
+type DocumentType = "profilePic" | "aadhar" | "land" | "bank";
 
-interface GeoTag {
-  latitude: number;
-  longitude: number;
+interface Documents {
+  id: number;
+  profilePic: string;
+  aadhar: string;
+  land: string;
+  bank: string;
+  farmerId: number;
 }
 
 interface BankDetails {
@@ -36,16 +41,18 @@ interface BankDetails {
 }
 
 interface Field {
-  geoTag: GeoTag;
+  id: number;
   surveyNumber: string;
-  areaInHa: number;
+  areaHa: number;
   yieldEstimate: number;
+  locationX: string;
+  locationY: string;
 }
 
 interface Farmer {
-  id: string;
-  name: string;
-  relationInfo: string;
+  id: number;
+  farmerName: string;
+  relationship: string;
   gender: Gender;
   community: Community;
   aadharNumber: string;
@@ -53,96 +60,15 @@ interface Farmer {
   district: string;
   mandal: string;
   village: string;
-  panchayat: string;
-  dob: string;
+  panchayath: string;
+  dateOfBirth: string;
   age: number;
-  contact: string;
-  photo: string;
-  aadharDoc: string;
-  landDoc: string;
-  bankDoc: string;
+  contactNumber: string;
+  accountNumber: string;
+  documents: Documents;
   bankDetails: BankDetails;
   fields: Field[];
 }
-
-const mockFarmers: Farmer[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    relationInfo: "S/O Robert Doe",
-    gender: "MALE",
-    community: "GENERAL",
-    aadharNumber: "123456789012",
-    state: "Telangana",
-    district: "Hyderabad",
-    mandal: "Secunderabad",
-    village: "Example Village",
-    panchayat: "Example Panchayat",
-    dob: "1990-01-01",
-    age: 33,
-    contact: "9876543210",
-    photo: "farmer1.jpg",
-    aadharDoc: "aadhar1.pdf",
-    landDoc: "land1.pdf",
-    bankDoc: "bank1.pdf",
-    bankDetails: {
-      ifscCode: "SBIN0123456",
-      branchName: "Secunderabad Branch",
-      address: "Bank Street, Secunderabad",
-      bankName: "State Bank of India",
-      bankCode: "SBI001",
-    },
-    fields: [
-      {
-        geoTag: { latitude: 17.385044, longitude: 78.486671 },
-        surveyNumber: "123/A",
-        areaInHa: 2.5,
-        yieldEstimate: 1000.0,
-      },
-      {
-        geoTag: { latitude: 17.385044, longitude: 78.486671 },
-        surveyNumber: "123/B",
-        areaInHa: 1.5,
-        yieldEstimate: 750.0,
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Sarah Smith",
-    relationInfo: "D/O William Smith",
-    gender: "FEMALE",
-    community: "OBC",
-    aadharNumber: "989876543210",
-    state: "Telangana",
-    district: "Rangareddy",
-    mandal: "Shamshabad",
-    village: "Airport Village",
-    panchayat: "Airport Panchayat",
-    dob: "1985-05-15",
-    age: 38,
-    contact: "8765432109",
-    photo: "farmer2.jpg",
-    aadharDoc: "aadhar2.pdf",
-    landDoc: "land2.pdf",
-    bankDoc: "bank2.pdf",
-    bankDetails: {
-      ifscCode: "HDFC0001234",
-      branchName: "Shamshabad Branch",
-      address: "Airport Road, Shamshabad",
-      bankName: "HDFC Bank",
-      bankCode: "HDFC001",
-    },
-    fields: [
-      {
-        geoTag: { latitude: 17.240263, longitude: 78.42972 },
-        surveyNumber: "456/A",
-        areaInHa: 3.0,
-        yieldEstimate: 1200.0,
-      },
-    ],
-  },
-];
 
 interface BaseDialogProps {
   isOpen: boolean;
@@ -162,7 +88,7 @@ const BankDetailsDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Bank Details</DialogTitle>
         </DialogHeader>
@@ -200,7 +126,7 @@ const FieldsDialog = ({ fields, isOpen, onClose }: FieldsDialogProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Fields Information</DialogTitle>
         </DialogHeader>
@@ -214,14 +140,12 @@ const FieldsDialog = ({ fields, isOpen, onClose }: FieldsDialogProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {fields.map((field, index) => (
-              <TableRow key={`${field.surveyNumber}-${index}`}>
+            {fields.map(field => (
+              <TableRow key={field.id}>
                 <TableCell>{field.surveyNumber}</TableCell>
-                <TableCell>{field.areaInHa.toFixed(2)}</TableCell>
-                <TableCell>{field.yieldEstimate.toFixed(2)}</TableCell>
-                <TableCell>{`${field.geoTag.latitude.toFixed(
-                  6
-                )}, ${field.geoTag.longitude.toFixed(6)}`}</TableCell>
+                <TableCell>{field.areaHa}</TableCell>
+                <TableCell>{field.yieldEstimate}</TableCell>
+                <TableCell>{`${field.locationX}, ${field.locationY}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -231,41 +155,98 @@ const FieldsDialog = ({ fields, isOpen, onClose }: FieldsDialogProps) => {
   );
 };
 
-interface DocumentPreviewProps {
-  type: DocumentType;
-  value: string;
+interface DocumentsDialogProps extends BaseDialogProps {
+  documents?: Documents;
 }
 
-const DocumentPreview = ({ type, value }: DocumentPreviewProps) => (
-  <div className="relative group">
-    <Eye className="h-4 w-4 cursor-pointer hover:text-blue-500" />
-    <div className="hidden group-hover:block absolute z-50 p-2 bg-white rounded shadow-lg -translate-x-1/2 left-1/2">
-      {type === "photo" ? (
-        <img
-          src={`/api/placeholder/100/100`}
-          alt="Farmer photo"
-          className="w-24 h-24 object-cover rounded"
-        />
-      ) : (
-        <div className="flex items-center space-x-2 min-w-[200px]">
-          <span className="text-sm truncate">{value}</span>
-          <Download className="h-4 w-4 cursor-pointer hover:text-blue-500" />
-        </div>
-      )}
-    </div>
-  </div>
-);
+const DocumentsDialog = ({
+  documents,
+  isOpen,
+  onClose,
+}: DocumentsDialogProps) => {
+  if (!documents) return null;
+
+  const documentTypes: DocumentType[] = [
+    "profilePic",
+    "aadhar",
+    "land",
+    "bank",
+  ];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Documents</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+          {documentTypes.map(type => (
+            <div key={type} className="mb-4">
+              <h3 className="text-lg font-semibold capitalize mb-2">{type}</h3>
+              {type === "profilePic" ? (
+                <img
+                  src={documents[type]}
+                  alt={`${type} document`}
+                  className="w-48 h-48 object-cover rounded"
+                />
+              ) : (
+                <div className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                  <span className="text-sm truncate mr-2">
+                    {documents[type]}
+                  </span>
+                  <Button size="sm" variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const DetailsTable = () => {
+  const [farmers, setFarmers] = useState<Farmer[]>([]);
   const [selectedBankDetails, setSelectedBankDetails] = useState<BankDetails>();
   const [selectedFields, setSelectedFields] = useState<Field[]>();
+  const [selectedDocuments, setSelectedDocuments] = useState<Documents>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const response = await fetch("/api/farmer", {
+          method: "GET",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch farmers");
+        }
+        const data = await response.json();
+        setFarmers(data.farmers);
+        setIsLoading(false);
+      } catch (err) {
+        setError("Error fetching farmers data");
+        setIsLoading(false);
+        console.log(err);
+      }
+    };
+
+    fetchFarmers();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="whitespace-nowrap">id</TableHead>
+            <TableHead className="whitespace-nowrap">ID</TableHead>
             <TableHead className="whitespace-nowrap">Name</TableHead>
             <TableHead className="whitespace-nowrap">Relation</TableHead>
             <TableHead className="whitespace-nowrap">Gender</TableHead>
@@ -285,36 +266,56 @@ const DetailsTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {mockFarmers.map(farmer => (
+          {farmers.map(farmer => (
             <TableRow key={farmer.id} className="hover:bg-muted/50">
-              <TableCell>{farmer.id}</TableCell>
-              <TableCell>{farmer.name}</TableCell>
-              <TableCell>{farmer.relationInfo}</TableCell>
-              <TableCell>{farmer.gender}</TableCell>
-              <TableCell>{farmer.community}</TableCell>
-              <TableCell>{farmer.aadharNumber}</TableCell>
-              <TableCell>{farmer.state}</TableCell>
-              <TableCell>{farmer.district}</TableCell>
-              <TableCell>{farmer.mandal}</TableCell>
-              <TableCell>{farmer.village}</TableCell>
-              <TableCell>{farmer.panchayat}</TableCell>
-              <TableCell>{farmer.dob}</TableCell>
-              <TableCell>{farmer.age}</TableCell>
-              <TableCell>{farmer.contact}</TableCell>
-              <TableCell>
-                <div className="flex space-x-3">
-                  {(["photo", "aadharDoc", "landDoc", "bankDoc"] as const).map(
-                    doc => (
-                      <DocumentPreview
-                        key={doc}
-                        type={doc}
-                        value={farmer[doc]}
-                      />
-                    )
-                  )}
-                </div>
+              <TableCell className="whitespace-nowrap">{farmer.id}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.farmerName}
               </TableCell>
-              <TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.relationship}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.gender}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.community}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.aadharNumber}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.state}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.district}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.mandal}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.village}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.panchayath}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                {new Date(farmer.dateOfBirth).toLocaleDateString()}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">{farmer.age}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {farmer.contactNumber}
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedDocuments(farmer.documents)}
+                >
+                  View Documents
+                </Button>
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
                 <Button
                   variant="outline"
                   size="sm"
@@ -323,7 +324,7 @@ const DetailsTable = () => {
                   View Details
                 </Button>
               </TableCell>
-              <TableCell>
+              <TableCell className="whitespace-nowrap">
                 <Button
                   variant="outline"
                   size="sm"
@@ -347,6 +348,12 @@ const DetailsTable = () => {
         fields={selectedFields}
         isOpen={!!selectedFields}
         onClose={() => setSelectedFields(undefined)}
+      />
+
+      <DocumentsDialog
+        documents={selectedDocuments}
+        isOpen={!!selectedDocuments}
+        onClose={() => setSelectedDocuments(undefined)}
       />
     </div>
   );
