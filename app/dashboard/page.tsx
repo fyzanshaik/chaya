@@ -20,8 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import { FarmerRegistrationForm } from "../components/RegistrationForm";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { FarmerForm } from "../components/FarmerForm";
 
 const FormPage = () => {
   return (
@@ -39,13 +38,11 @@ const FormPage = () => {
               <DialogTrigger asChild>
                 <Button>ADD FARMER DATA</Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xl overflow-y-auto">
+              <DialogContent className="max-w-xl">
                 <DialogHeader>
-                  <DialogTitle>Farmer</DialogTitle>
+                  <DialogTitle>Add Farmer Data</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[400px]">
-                  <FarmerRegistrationForm />
-                </ScrollArea>
+                <FarmerForm />
               </DialogContent>
             </Dialog>
 

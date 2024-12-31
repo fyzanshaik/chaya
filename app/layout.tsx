@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Azeret_Mono as Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
@@ -28,7 +29,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>{children}</SidebarProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>{children}</SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
